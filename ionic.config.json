@@ -1,0 +1,7 @@
+{
+  "name": "BuscaCEP",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
