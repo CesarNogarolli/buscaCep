@@ -14,6 +14,6 @@ export class MeuCepService {
       headers: new HttpHeaders().set('Content-Type', 'application/json'),
     };
 
-    return this.http.get(url, header);
+    return this.http.get(url, header).toPromise();
   }
 }
