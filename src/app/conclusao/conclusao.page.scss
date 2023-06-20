@@ -1,0 +1,13 @@
+.back {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+    height: 2rem;
+
+    p {
+        font-size: 10px;
+        font-weight: bold;
+    }
+}

@@ -25,14 +25,21 @@ export class HomePage {
     private cep: MeuCepService
   ) {}
 
+  ionViewDidEnter() {
+    if (localStorage.getItem('cep')) {
+      this.editar();
+    } else {
+      this.limpaDados();
+    }
+  }
+
   buscaCEP(evento: any) {
     const cepDigitado = evento.detail.value;
     console.log('Obtendo os dados para o cep: ' + cepDigitado);
 
     if (cepDigitado.length == 8) {
-      this.cep
-        .localizacep(cepDigitado)
-        .then((resp) => {
+      this.cep.localizacep(cepDigitado).subscribe(
+        (resp) => {
           this.dados = resp;
           if (!this.dados || this.dados.erro) {
             this.exibeToast('CEP não encontrado!', 'warning');
@@ -45,10 +52,11 @@ export class HomePage {
             this.endereco.numero = this.dados.numero;
             console.log(this.endereco);
           }
-        })
-        .catch(() => {
+        },
+        (erro) => {
           this.exibeToast('CEP não encontrado!', 'warning');
-        });
+        }
+      );
     }
   }
 
@@ -62,9 +70,34 @@ export class HomePage {
     ) {
       this.exibeToast('Preencha os campos necessário.', 'danger');
     } else {
+      //! Acessar uma função que salva tudo em cache:
+      this.salvamento();
       this.nav.navigateForward('conclusao');
     }
   }
+
+  //! Funação que salva as coisas no cache
+  salvamento() {
+    localStorage.setItem('rua', this.endereco.rua);
+    localStorage.setItem('cep', this.endereco.cep);
+    localStorage.setItem('numero', this.endereco.numero);
+    localStorage.setItem('bairro', this.endereco.bairro);
+    localStorage.setItem('cidade', this.endereco.cidade);
+    localStorage.setItem('estado', this.endereco.estado);
+    localStorage.setItem('complemento', this.endereco.complemento);
+  }
+
+  limpaDados() {
+    this.endereco.rua = '';
+    this.endereco.numero = '';
+    this.endereco.complemento = '';
+    this.endereco.bairro = '';
+    this.endereco.cep = '';
+    this.endereco.cidade = '';
+    this.endereco.estado = '';
+  }
+
+  editar() {}
 
   async exibeToast(msg: string, cor: string) {
     const toast = await this.mensagem.create({
