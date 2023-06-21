@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MeuCepService } from '../services/meu-cep.service';
 import { NavController, ToastController } from '@ionic/angular';
+import { throwError } from 'rxjs';
+import { EnderecosService } from '../services/enderecos.service';
 
 @Component({
   selector: 'app-home',
@@ -19,18 +21,17 @@ export class HomePage {
     estado: '',
   };
 
+  labelBotao = 'cadastrar';
+
   constructor(
     public mensagem: ToastController,
     public nav: NavController,
-    private cep: MeuCepService
+    private cep: MeuCepService,
+    public servico: EnderecosService
   ) {}
 
   ionViewDidEnter() {
-    if (localStorage.getItem('cep')) {
-      this.editar();
-    } else {
-      this.limpaDados();
-    }
+    this.limpaDados();
   }
 
   buscaCEP(evento: any) {
@@ -78,6 +79,19 @@ export class HomePage {
 
   //! Funação que salva as coisas no cache
   salvamento() {
+    //this.enderecos.push(this.endereco);
+    this.servico.salvarEndereco(
+      this.endereco.rua,
+      this.endereco.numero,
+      this.endereco.cep,
+      this.endereco.complemento,
+      this.endereco.bairro,
+      this.endereco.cidade,
+      this.endereco.estado
+    );
+
+    /*
+    Não será usada
     localStorage.setItem('rua', this.endereco.rua);
     localStorage.setItem('cep', this.endereco.cep);
     localStorage.setItem('numero', this.endereco.numero);
@@ -85,9 +99,13 @@ export class HomePage {
     localStorage.setItem('cidade', this.endereco.cidade);
     localStorage.setItem('estado', this.endereco.estado);
     localStorage.setItem('complemento', this.endereco.complemento);
+    */
+
+    this.nav.navigateRoot('conclusao');
   }
 
   limpaDados() {
+    this.labelBotao = 'Cadastrar';
     this.endereco.rua = '';
     this.endereco.numero = '';
     this.endereco.complemento = '';
@@ -97,7 +115,19 @@ export class HomePage {
     this.endereco.estado = '';
   }
 
-  editar() {}
+  //! Não será usada
+  /*
+  editar() {
+    this.labelBbotao = 'Editar';
+    this.endereco.rua = localStorage.getItem('rua')!;
+    this.endereco.numero = localStorage.getItem('numero')!;
+    this.endereco.complemento = localStorage.getItem('complemento')!;
+    this.endereco.bairro = localStorage.getItem('bairro')!;
+    this.endereco.cep = localStorage.getItem('cep')!;
+    this.endereco.cidade = localStorage.getItem('cidade')!;
+    this.endereco.estado = localStorage.getItem('estado')!;
+  }
+*/
 
   async exibeToast(msg: string, cor: string) {
     const toast = await this.mensagem.create({
