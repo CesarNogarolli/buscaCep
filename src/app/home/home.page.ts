@@ -100,8 +100,6 @@ export class HomePage {
     localStorage.setItem('estado', this.endereco.estado);
     localStorage.setItem('complemento', this.endereco.complemento);
     */
-
-    this.nav.navigateRoot('conclusao');
   }
 
   limpaDados() {
